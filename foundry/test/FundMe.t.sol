@@ -8,8 +8,9 @@ import {DeployFundMe} from "../script/DeployFundMe.s.sol";
 contract FundMeTest is Test {
     FundMe fundMe;
     uint256 constant SEND_VALUE = 1 ether;
-    uint256 constant STARTING_BALANCE = 100 ether;
+    uint256 constant STARTING_BALANCE = 10 ether;
     address USER = makeAddr("user");
+    uint256 constant GAS_PRICE = 1;
 
     function setUp() external {
         DeployFundMe deployFundMe = new DeployFundMe();
@@ -65,17 +66,18 @@ contract FundMeTest is Test {
         uint256 startingFundMeBalance = address(fundMe).balance;
 
         // Act
+        vm.txGasPrice(GAS_PRICE);
         vm.prank(fundMe.getOwner());
-        fundMe.cheaperWithdraw();
+        fundMe.withdraw();
 
         // Assert
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         uint256 endingFundMeBalance = address(fundMe).balance;
 
-        assertEq(endingOwnerBalance, 0);
+        assertEq(endingFundMeBalance, 0);
         assertEq(
-            endingFundMeBalance,
-            startingFundMeBalance + startingOwnerBalance
+            startingFundMeBalance + startingOwnerBalance,
+            endingOwnerBalance
         );
     }
 
@@ -93,14 +95,14 @@ contract FundMeTest is Test {
 
         // Act
         vm.startPrank(fundMe.getOwner());
-        fundMe.cheaperWithdraw();
+        fundMe.withdraw();
         vm.stopPrank();
 
         // Assert
         assert(address(fundMe).balance == 0);
-        assertEq(
-            startingFundMeBalance + startingOwnerBalance,
-            fundMe.getOwner().balance
+        assert(
+            startingFundMeBalance + startingOwnerBalance ==
+                fundMe.getOwner().balance
         );
     }
 }
