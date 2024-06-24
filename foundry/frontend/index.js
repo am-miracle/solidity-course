@@ -17,8 +17,16 @@ async function connect() {
     } catch (error) {
       console.log(error);
     }
-    connectButton.innerHTML = "Connected";
+    // connectButton.innerHTML = "Connected";
     const accounts = await ethereum.request({ method: "eth_accounts" });
+    if (accounts.length > 0) {
+      const address = accounts[0];
+      const shortenedAddress = `${address.substring(
+        0,
+        4
+      )}...${address.substring(address.length - 4)}`;
+      connectButton.innerHTML = shortenedAddress;
+    }
     console.log(accounts);
   } else {
     connectButton.innerHTML = "Please install MetaMask";
