@@ -13,12 +13,16 @@ contract Raffle is VRFConsumerBaseV2Plus {
     error Raffle__NotEnoughEthSent();
     error Raffle__TransferFailed();
     error Raffle__RaffleNotOpen();
+    error Raffle__UpkeepNotNeeded(
+        uint256 currentBalance,
+        uint256 numPlayers,
+        uint256 raffleState
+    );
 
     /** Type Declaration */
     enum RaffleState {
         OPEN,
-        CALCULATING,
-        CLOSED
+        CALCULATING
     }
 
     /** State variables */
@@ -76,12 +80,36 @@ contract Raffle is VRFConsumerBaseV2Plus {
         emit EnteredRaffle(msg.sender);
     }
 
-    function pickWinner() external returns (address memmory) {
-        if (block.timestamp - s_lastTimeStamp > i_interval) {
-            revert();
+    /// @notice This function is call by Chainlink Automation nodes to see if it's
+    // time to perform an upkeep.
+    // The following should be true for this to return true;
+    // 1.- The time interval has passed between raffle runs
+    // 2.- The raffle is in the OPEN state
+    // 3.- The contract has ETH (players)
+    // 4. - (Implicit) The subscription is funded with LINK
+    function checkUpkeep(
+        bytes memory /** checkdata */
+    ) public view returns (bool upkeepNeeded, bytes memory /**performData **/) {
+        bool timePassed = (block.timestamp - s_lastTimeStamp) >= i_interval;
+        bool isOpen = RaffleState.OPEN == s_raffleState;
+        bool hasPlayers = s_players.length > 0;
+        bool hasBalance = address(this).balance > 0;
+        upkeepNeeded = (timePassed && isOpen && hasPlayers && hasBalance);
+        return (upkeepNeeded, "0x0");
+    }
+
+    function performUpkeep(bytes calldata /** performData */) external {
+        (bool upkeepNeeded, ) = checkUpkeep("");
+
+        if (!upkeepNeeded) {
+            revert Raffle__UpkeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_raffleState)
+            );
         }
         s_raffleState = RaffleState.CALCULATING;
-        uint256 requestId = s_vrfCoordinator.requestRandomWords(
+        s_vrfCoordinator.requestRandomWords(
             VRFV2PlusClient.RandomWordsRequest({
                 keyHash: i_keyHash,
                 subId: i_subscriptionId,
@@ -99,11 +127,12 @@ contract Raffle is VRFConsumerBaseV2Plus {
     /**
      * @notice Callback function used by VRF Coordinator
      *
-     * @param requestId - id of the request
      * @param randomWords - array of random results from VRF Coordinator
      */
+    //  * @param requestId - id of the request
+
     function fulfillRandomWords(
-        uint256 requestId,
+        uint256 /** requestId **/,
         uint256[] memory randomWords
     ) internal override {
         // Checks
