@@ -16,3 +16,6 @@
 [submodule "lottery-sm/contract/lib/solmate"]
 	path = lottery-sm/contract/lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "lottery-sm/contract/lib/foundry-devops"]
+	path = lottery-sm/contract/lib/foundry-devops
+	url = https://github.com/Cyfrin/foundry-devops

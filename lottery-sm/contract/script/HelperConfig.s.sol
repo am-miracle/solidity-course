@@ -2,10 +2,16 @@
 
 pragma solidity ^0.8.18;
 import {Script} from "forge-std/Script.sol";
-import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
+// import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
+import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+
 import {LinkToken} from "../test/mocks/LinkToken.sol";
 
 contract HelperConfig is Script {
+    address private constant LINK_ETH_AGGREGATOR_ADDRESS =
+        0x326C977e6Efc84e512BB97F295BDe669b44F6E8D; // Example for Ethereum Mainnet
+
     struct NetworkConfig {
         uint256 entranceFee;
         uint256 interval;
@@ -59,13 +65,20 @@ contract HelperConfig is Script {
         if (activeNetworkConfig.vrfCoordinator != address(0)) {
             return activeNetworkConfig;
         }
+        (, int256 price, , , ) = AggregatorV3Interface(
+            LINK_ETH_AGGREGATOR_ADDRESS
+        ).latestRoundData();
+
         uint96 baseFee = 0.25 ether; // 0.25 LINK
         uint96 gasPriceLink = 1e9; // 1 gwei LINK
+        int256 weiPerLink = price; // current LINK/ETH price
+        
         vm.startBroadcast();
-        VRFCoordinatorV2Mock vrfCoordinatorV2Mock = new VRFCoordinatorV2Mock(
-            baseFee,
-            gasPriceLink
-        );
+        VRFCoordinatorV2_5Mock vrfCoordinatorV2Mock = new VRFCoordinatorV2_5Mock(
+                baseFee,
+                gasPriceLink,
+                weiPerLink
+            );
         LinkToken linkToken = new LinkToken();
         vm.stopBroadcast();
 

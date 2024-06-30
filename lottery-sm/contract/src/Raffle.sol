@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {VRFConsumerBaseV2Plus} from "@chainlink/contracts/src/v0.8/dev/vrf/VRFConsumerBaseV2Plus.sol";
-import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/dev/vrf/libraries/VRFV2PlusClient.sol";
+import {VRFConsumerBaseV2Plus} from "@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus.sol";
+import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient.sol";
 
 /// @title A sample Lottery contract
 /// @author Andreas
@@ -35,7 +35,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     // address private immutable i_vrfCoordinator;
     bytes32 private immutable i_keyHash;
     uint256 private immutable i_subscriptionId;
-    uint32 private immutable i_callbackGasLimit = 40000;
+    uint32 private immutable i_callbackGasLimit = 4p0000;
 
     uint256 private s_lastTimeStamp;
     address payable[] private s_players;
@@ -133,7 +133,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
 
     function fulfillRandomWords(
         uint256 /** requestId **/,
-        uint256[] memory randomWords
+        uint256[] calldata randomWords
     ) internal override {
         // Checks
 
