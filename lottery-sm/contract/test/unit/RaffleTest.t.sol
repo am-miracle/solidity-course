@@ -99,4 +99,8 @@ contract RaffleTest is Test, CodeConstants {
         vm.prank(PLAYER);
         raffle.enterRaffle{value: raffleEntranceFee}();
     }
+
+    /**
+     CHECK UPKEEP
+     */
 }
