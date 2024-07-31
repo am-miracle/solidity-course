@@ -28,3 +28,6 @@
 [submodule "foundry-NFT/lib/foundry-devops"]
 	path = foundry-NFT/lib/foundry-devops
 	url = https://github.com/ChainAccelOrg/foundry-devops
+[submodule "foundry-stablecoin/lib/forge-std"]
+	path = foundry-stablecoin/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
