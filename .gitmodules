@@ -31,3 +31,6 @@
 [submodule "foundry-stablecoin/lib/forge-std"]
 	path = foundry-stablecoin/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "foundry-stablecoin/lib/openzeppelin-contracts"]
+	path = foundry-stablecoin/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
