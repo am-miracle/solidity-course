@@ -93,14 +93,14 @@ contract DSCEngine is ReentrancyGuard {
      * @param amountCollateral The amount of collateral tokens to deposit.
      * @param amountDscToMint The amount of DSC to mint.
      *
-     * @example
+     * example
      * ```
      * // Deposit 100 USDC as collateral and mint 10 DSC tokens
      * depositCollateralAndMintDSC(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48, 100, 10);
      * ```
      */
     function depositCollateralAndMintDSC(
-        uint256 tokenCollateralAddress,
+        address tokenCollateralAddress,
         uint256 amountCollateral,
         uint256 amountDscToMint
     ) external {
@@ -136,7 +136,7 @@ contract DSCEngine is ReentrancyGuard {
      * @param amountCollateral The amount of collateral tokens to be redeemed.
      * @param amountDscToBurn The amount of DSC to be burned.
      *
-     * @example
+     * example
      * ```
      * // Redeem 100 USDC as collateral and burn 50 DSC tokens
      * redeemCollateralForDSC(USDC_ADDRESS, 100, 50);
@@ -152,8 +152,8 @@ contract DSCEngine is ReentrancyGuard {
     /**
      * In order to redeem collateral:
      *  - The health factor must be over 1 AFTER collateral pulled
-     * @param tokenCollateralAddress
-     * @param amountCollateral
+     * @param tokenCollateralAddress collateral token to redeem
+     * @param amountCollateral amount of collateral to redeem
      */
     function redeemCollateral(address tokenCollateralAddress, uint256 amountCollateral)
         public
@@ -209,15 +209,15 @@ contract DSCEngine is ReentrancyGuard {
      * @param collateral The ERC20 collateral address to liquidate from the user.
      * @param user The user who have broken the health factor. Their _healthFactor should be below MIN_HEALTH_FACTOR
      * @param debtToCover The amount of DSC you want to burn to improve user health factor.
-     * @example
+     * example
      * ```
      * // Liquidate a user's USDC collateral to cover 10 DSC of debt
      * liquidate(USDC_ADDRESS, userAddress, 10 * 1e18);
      * ```
-     * @notice: You can partially liquidate a user.
-     * @notice: You will get a 10% LIQUIDATION_BONUS for taking the users funds.
-     * @notice: This function working assumes that the protocol will be roughly 150% overcollateralized in order for this to work.
-     * @notice: A known bug would be if the protocol was only 100% collateralized, we wouldn't be able to liquidate anyone.
+     * @notice You can partially liquidate a user.
+     * @notice You will get a 10% LIQUIDATION_BONUS for taking the users funds.
+     * @notice This function working assumes that the protocol will be roughly 150% overcollateralized in order for this to work.
+     * @notice A known bug would be if the protocol was only 100% collateralized, we wouldn't be able to liquidate anyone.
      */
     function liquidate(address collateral, address user, uint256 debtToCover)
         external
@@ -226,7 +226,7 @@ contract DSCEngine is ReentrancyGuard {
     {
         // Checks
         uint256 startingUserHealthFactor = _healthFactor(user);
-        if(startingUserHealthFactor >= MIN_HEALTH_FACTOR) {
+        if (startingUserHealthFactor >= MIN_HEALTH_FACTOR) {
             revert DSCEngine__HealthFactorOk();
         }
         // Effects
@@ -284,8 +284,8 @@ contract DSCEngine is ReentrancyGuard {
         // 1. get the price of the token in USD
         // 2. convert the usd amount to the token amount
         AggregatorV3Interface priceFeed = AggregatorV3Interface(s_priceFeeds[token]);
-        (, int256 price, , , ) = priceFeed.latestRoundData();
-        return (usdAmountInWei * PRECISION) / (uint256(price) * ADDITIONAL_FEED_PRECISION)
+        (, int256 price,,,) = priceFeed.latestRoundData();
+        return (usdAmountInWei * PRECISION) / (uint256(price) * ADDITIONAL_FEED_PRECISION);
     }
 
     function getAccountCollateralValue(address user) public view returns (uint256 totalCollateralValueInUsd) {
