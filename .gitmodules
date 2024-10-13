@@ -64,3 +64,6 @@
 [submodule "account-abstraction/lib/openzeppelin-contracts"]
 	path = account-abstraction/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "account-abstraction/lib/foundry-era-contracts"]
+	path = account-abstraction/lib/foundry-era-contracts
+	url = https://github.com/cyfrin/foundry-era-contracts
