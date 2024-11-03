@@ -67,3 +67,9 @@
 [submodule "account-abstraction/lib/foundry-era-contracts"]
 	path = account-abstraction/lib/foundry-era-contracts
 	url = https://github.com/cyfrin/foundry-era-contracts
+[submodule "foundry-dao/lib/forge-std"]
+	path = foundry-dao/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "foundry-dao/lib/openzeppelin-contracts"]
+	path = foundry-dao/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
