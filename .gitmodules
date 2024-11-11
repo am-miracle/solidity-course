@@ -73,3 +73,9 @@
 [submodule "foundry-dao/lib/openzeppelin-contracts"]
 	path = foundry-dao/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "security-course/lib/forge-std"]
+	path = security-course/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "security-course/lib/openzeppelin-contracts"]
+	path = security-course/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
